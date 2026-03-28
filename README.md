@@ -26,6 +26,8 @@ Install the extension directly from the **Chrome Web Store**:
 
 ## 📸 Screenshots
 
+![Preview](assets/preview.png)
+
 ![Toggle On](assets/toggle-on.png)
 ![Toggle Off](assets/toggle-off.png)
 ![Settings Panel](assets/settings-panel.png)
