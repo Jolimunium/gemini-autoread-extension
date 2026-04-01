@@ -13,8 +13,8 @@
   - **Tab-specific Mode**: Control auto-read independently for each conversation.
 - **⌨️ Customizable Shortcuts**: Fast-access keys for toggling the feature or opening settings.
 - **🔔 Visual Logic Feedback**: The microphone icon changes color to reflect real-time status:
-  - <span style="color:#10b981">●</span> **Green**: Successfully triggered playback.
-  - <span style="color:#f43f5e">●</span> **Red**: Error or timeout (monitors if the voice actually started).
+  - 🟢 **Green**: Successfully triggered playback.
+  - 🔴 **Red**: Error or timeout (monitors if the voice actually started).
 - **💾 Startup Preferences**: Configure whether the extension starts **Enabled** or **Disabled** by default.
 - **📥 Debug Log Export**: One-click download of activity logs (JSON) for easy troubleshooting.
 
@@ -29,6 +29,14 @@
 
 > [!TIP]
 > You can rebind these keys to any combination you prefer directly in the **Shortcuts** section of the Settings panel.
+
+---
+
+## 📦 Installation
+
+Install the extension directly from the **Chrome Web Store**:
+
+[👉 **Get it on Chrome Web Store**](https://chromewebstore.google.com/detail/nhkhdpeeolebfhjchlhaimkcgpfcmmbp?utm_source=item-share-cb)
 
 ---
 
@@ -51,11 +59,8 @@ Change the **Default Sync Mode** to decide how new tabs should behave. **Global 
 
 ![Preview](assets/preview.png)
 
-<p align="center">
-  <img src="assets/toggle-on.png" width="30%" />
-  <img src="assets/toggle-off.png" width="30%" />
-  <img src="assets/settings-panel.png" width="30%" />
-</p>
+| ![Toggle On](assets/toggle-on.png) | ![Toggle Off](assets/toggle-off.png) | ![Settings Panel](assets/settings-panel.png) |
+| :---: | :---: | :---: |
 
 ---
 
@@ -63,7 +68,7 @@ Change the **Default Sync Mode** to decide how new tabs should behave. **Global 
 
 If this extension saves you time and clicks, consider supporting its development:
 
-[![ko-fi](https://storage.ko-fi.com/cdn/kofiv2.png)](https://ko-fi.com/olipium)
+[![ko-fi](src/assets/kofi_button.svg)](https://ko-fi.com/olipium)
 
 ---
 
