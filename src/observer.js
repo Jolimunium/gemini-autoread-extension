@@ -17,10 +17,16 @@ const GAR_Observer = (() => {
    */
   const checkAlreadyReading = (pauseIcons) => {
     if (pauseIcons.length > 0) {
-      Logger.log(state.debugMode, "Auto-read: Already reading (Pause icon found).");
+      Logger.log(
+        state.debugMode,
+        "Auto-read: Already reading (Pause icon found).",
+      );
       return true;
     }
-    Logger.log(state.debugMode, "Auto-read: Not reading (Pause icon not found).");
+    Logger.log(
+      state.debugMode,
+      "Auto-read: Not reading (Pause icon not found).",
+    );
     return false;
   };
 
@@ -49,7 +55,8 @@ const GAR_Observer = (() => {
 
     // waitForState polls fresh queries intentionally — it must detect state change over time.
     const isPlaying = await DOM.waitForState(
-      () => document.querySelectorAll(GAR_Config.SELECTORS.PAUSE_ICON).length > 0,
+      () =>
+        document.querySelectorAll(GAR_Config.SELECTORS.PAUSE_ICON).length > 0,
       GAR_Config.TIMINGS.WAIT_TIMEOUT,
     );
     Logger.log(
@@ -85,11 +92,18 @@ const GAR_Observer = (() => {
       await DOM.sleep(GAR_Config.TIMINGS.SLEEP_INTERVAL);
 
       for (let i = 1; i <= state.maxAttempts; i++) {
-        Logger.log(state.debugMode, `Process: Attempt ${i}/${state.maxAttempts}`);
+        Logger.log(
+          state.debugMode,
+          `Process: Attempt ${i}/${state.maxAttempts}`,
+        );
 
         // Query both collections once per iteration — results passed into helpers below.
-        const pauseIcons = document.querySelectorAll(GAR_Config.SELECTORS.PAUSE_ICON);
-        const volumeIcons = document.querySelectorAll(GAR_Config.SELECTORS.VOLUME_ICON);
+        const pauseIcons = document.querySelectorAll(
+          GAR_Config.SELECTORS.PAUSE_ICON,
+        );
+        const volumeIcons = document.querySelectorAll(
+          GAR_Config.SELECTORS.VOLUME_ICON,
+        );
 
         if (checkAlreadyReading(pauseIcons)) {
           GAR_UI.setMicState("normal");
@@ -102,7 +116,10 @@ const GAR_Observer = (() => {
         await DOM.sleep(GAR_Config.TIMINGS.SLEEP_INTERVAL);
       }
 
-      Logger.log(state.debugMode, `Auto-read: Failed after ${state.maxAttempts} attempts.`);
+      Logger.log(
+        state.debugMode,
+        `Auto-read: Failed after ${state.maxAttempts} attempts.`,
+      );
       GAR_UI.setMicState("error");
     } finally {
       isProcessing = false;
@@ -139,7 +156,9 @@ const GAR_Observer = (() => {
    * Checks for a new, unprocessed icon and triggers auto-read if found.
    */
   const handleMutationAdded = () => {
-    const volumeIcons = document.querySelectorAll(GAR_Config.SELECTORS.VOLUME_ICON);
+    const volumeIcons = document.querySelectorAll(
+      GAR_Config.SELECTORS.VOLUME_ICON,
+    );
     if (volumeIcons.length === 0) return;
 
     const lastIcon = volumeIcons[volumeIcons.length - 1];
@@ -147,7 +166,10 @@ const GAR_Observer = (() => {
       lastIcon.closest("button")?.parentElement || lastIcon.parentElement;
 
     if (trackingNode && !trackingNode.dataset.garProcessed) {
-      Logger.log(state.debugMode, "Observer: New volume read icon detected, processing...");
+      Logger.log(
+        state.debugMode,
+        "Observer: New volume read icon detected, processing...",
+      );
       processAutoRead(trackingNode);
     }
   };

@@ -23,9 +23,8 @@ const GAR_Config = {
 
   /** CSS selectors used to locate key elements in the Gemini UI. */
   SELECTORS: {
-    CHAT_CONTAINER:
-      '[data-test-id="model-response-text"], .model-response-text',
-    CHAT_CONTAINER_FALLBACK: "message-content",
+    CHAT_CONTAINER: 'infinite-scroller[data-test-id="chat-history-container"]',
+    CHAT_CONTAINER_FALLBACK: "main.chat-app",
     VOLUME_ICON: 'mat-icon[fonticon="volume_up"]',
     PAUSE_ICON: 'mat-icon[fonticon="pause"]',
   },

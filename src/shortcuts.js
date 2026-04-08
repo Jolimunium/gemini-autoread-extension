@@ -21,7 +21,8 @@ const GAR_Shortcuts = (() => {
     if (e.shiftKey) parts.push("Shift");
     if (e.altKey) parts.push("Alt");
     if (e.metaKey) parts.push("Meta");
-    if (!["Control", "Shift", "Alt", "Meta"].includes(e.key)) parts.push(e.code);
+    if (!["Control", "Shift", "Alt", "Meta"].includes(e.key))
+      parts.push(e.code);
     return parts.join("+");
   };
 
