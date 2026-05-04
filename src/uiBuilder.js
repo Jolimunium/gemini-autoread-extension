@@ -21,8 +21,12 @@ const GAR_UI = (() => {
     const container = shadowRoot.getElementById("gemini-autoread-toggle");
     if (statusSpan && container) {
       statusSpan.textContent = state.isAutoReadEnabled ? "ON" : "OFF";
-      statusSpan.style.color = state.isAutoReadEnabled ? GAR_Config.COLORS.GREEN : GAR_Config.COLORS.RED;
-      container.style.borderColor = state.isAutoReadEnabled ? GAR_Config.COLORS.GREEN : GAR_Config.COLORS.RED;
+      statusSpan.style.color = state.isAutoReadEnabled
+        ? GAR_Config.COLORS.GREEN
+        : GAR_Config.COLORS.RED;
+      container.style.borderColor = state.isAutoReadEnabled
+        ? GAR_Config.COLORS.GREEN
+        : GAR_Config.COLORS.RED;
     }
   };
 
@@ -65,7 +69,10 @@ const GAR_UI = (() => {
     setVal("gemini-autoread-max-attempts", state.maxAttempts);
     setVal("gemini-autoread-debounce", state.debounceTime);
     setChecked("gemini-autoread-debug-toggle", state.debugMode);
-    setVal("gemini-autoread-default-toggle", state.defaultEnabled ? "true" : "false");
+    setVal(
+      "gemini-autoread-default-toggle",
+      state.defaultEnabled ? "true" : "false",
+    );
     setVal("gemini-autoread-default-mode", state.defaultSyncMode);
     setText("gemini-autoread-shortcut-btn-toggle", state.shortcutToggle);
     setText("gemini-autoread-shortcut-btn-settings", state.shortcutSettings);
@@ -89,7 +96,8 @@ const GAR_UI = (() => {
    * Constructs the settings panel DOM and appends it to the shadow root.
    */
   const createSettingsPanel = () => {
-    if (!shadowRoot || shadowRoot.getElementById("gemini-autoread-settings")) return;
+    if (!shadowRoot || shadowRoot.getElementById("gemini-autoread-settings"))
+      return;
 
     // Panel is hidden by default via CSS (opacity: 0, visibility: hidden).
     // Visibility is toggled by adding/removing the .is-visible class.
@@ -103,11 +111,20 @@ const GAR_UI = (() => {
       paddingBottom: "10px",
     });
     header.appendChild(
-      createEl("span", { fontSize: "18px", fontWeight: "bold" }, { textContent: "⚙️ Settings" }),
+      createEl(
+        "span",
+        { fontSize: "18px", fontWeight: "bold" },
+        { textContent: "⚙️ Settings" },
+      ),
     );
     const closeBtn = createEl(
       "span",
-      { cursor: "pointer", color: GAR_Config.COLORS.RED, fontSize: "16px", fontWeight: "bold" },
+      {
+        cursor: "pointer",
+        color: GAR_Config.COLORS.RED,
+        fontSize: "16px",
+        fontWeight: "bold",
+      },
       { textContent: "✖" },
     );
     closeBtn.onclick = GAR_UI.togglePanel;
@@ -144,8 +161,22 @@ const GAR_UI = (() => {
         { textContent: "⌨️ Shortcuts:" },
       ),
     );
-    addRow(GAR_Components.ShortcutKeyBind(state, createEl, "Toggle Auto-Read", "toggle"));
-    addRow(GAR_Components.ShortcutKeyBind(state, createEl, "Toggle Settings", "settings"));
+    addRow(
+      GAR_Components.ShortcutKeyBind(
+        state,
+        createEl,
+        "Toggle Auto-Read",
+        "toggle",
+      ),
+    );
+    addRow(
+      GAR_Components.ShortcutKeyBind(
+        state,
+        createEl,
+        "Toggle Settings",
+        "settings",
+      ),
+    );
 
     const btns = createEl("div", {
       display: "flex",
@@ -156,14 +187,26 @@ const GAR_UI = (() => {
     });
     const exportBtn = createEl(
       "button",
-      { flex: "1", padding: "10px", border: "none", cursor: "pointer", fontWeight: "bold" },
+      {
+        flex: "1",
+        padding: "10px",
+        border: "none",
+        cursor: "pointer",
+        fontWeight: "bold",
+      },
       { textContent: "📥 Export Logs", className: "btn-export" },
     );
     exportBtn.onclick = () => GAR_Utils.Logger.exportLogs(state);
 
     const closePanelBtn = createEl(
       "button",
-      { flex: "1", padding: "10px", border: "none", cursor: "pointer", fontWeight: "bold" },
+      {
+        flex: "1",
+        padding: "10px",
+        border: "none",
+        cursor: "pointer",
+        fontWeight: "bold",
+      },
       { textContent: "✖ Close", className: "btn-close" },
     );
     closePanelBtn.onclick = GAR_UI.togglePanel;
@@ -175,7 +218,12 @@ const GAR_UI = (() => {
     // Ko-fi support button
     const kofiLink = createEl(
       "a",
-      { display: "block", width: "100%", marginTop: "12px", textAlign: "center" },
+      {
+        display: "block",
+        width: "100%",
+        marginTop: "12px",
+        textAlign: "center",
+      },
       {
         href: "https://ko-fi.com/olipium",
         target: "_blank",
