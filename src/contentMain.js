@@ -45,10 +45,10 @@ const GAR_App = (() => {
       .map((el) => el.name);
 
     if (missing.length === 0) {
-      Logger.log(true, "Health Check: All essential elements found.");
+      Logger.log(state.debugMode, "Health Check: All essential elements found.");
     } else if (isChatPage) {
       Logger.log(
-        true,
+        state.debugMode,
         `Health Check: Note - ${missing.join(", ")} not found yet. (Normal if no chat response is visible or loading slowly)`,
       );
     }
