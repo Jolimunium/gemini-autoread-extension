@@ -10,47 +10,47 @@ globalThis.GAR_Components = globalThis.GAR_Components || {};
  * @returns {HTMLElement} A wrapper div containing the label and input.
  */
 globalThis.GAR_Components.DebounceInput = (state, createEl) => {
-  const debLabel = createEl(
-    "label",
-    { display: "block", marginBottom: "5px" },
-    { textContent: "⏱️ Wait Time (ms):" },
-  );
-  const debInput = createEl(
-    "input",
-    {
-      width: "100%",
-      padding: "6px",
-      background: "#333",
-      color: "#fff",
-      border: "1px solid #444",
-      borderRadius: "4px",
-    },
-    {
-      type: "number",
-      value: state.debounceTime,
-      min: 200,
-      max: 5000,
-      id: "gemini-autoread-debounce",
-      name: "debounceTime",
-    },
-  );
+	const debLabel = createEl(
+		"label",
+		{ display: "block", marginBottom: "5px" },
+		{ textContent: "⏱️ Wait Time (ms):" },
+	);
+	const debInput = createEl(
+		"input",
+		{
+			width: "100%",
+			padding: "6px",
+			background: "#333",
+			color: "#fff",
+			border: "1px solid #444",
+			borderRadius: "4px",
+		},
+		{
+			type: "number",
+			value: state.debounceTime,
+			min: 200,
+			max: 5000,
+			id: "gemini-autoread-debounce",
+			name: "debounceTime",
+		},
+	);
 
-  // Save the updated debounce time whenever the user changes the input value.
-  debInput.onchange = (e) => {
-    state.debounceTime = Number.parseInt(e.target.value);
-    GAR_State.save();
-  };
+	// Save the updated debounce time whenever the user changes the input value.
+	debInput.onchange = (e) => {
+		state.debounceTime = Number.parseInt(e.target.value);
+		GAR_State.save();
+	};
 
-  const wrapper = createEl("div");
-  wrapper.appendChild(debLabel);
-  wrapper.appendChild(debInput);
-  // Add a small hint underneath the input to show the allowed range.
-  wrapper.appendChild(
-    createEl(
-      "div",
-      { fontSize: "10px", color: "#888", marginTop: "4px" },
-      { textContent: "Range: 200 - 5,000 ms" },
-    ),
-  );
-  return wrapper;
+	const wrapper = createEl("div");
+	wrapper.appendChild(debLabel);
+	wrapper.appendChild(debInput);
+	// Add a small hint underneath the input to show the allowed range.
+	wrapper.appendChild(
+		createEl(
+			"div",
+			{ fontSize: "10px", color: "#888", marginTop: "4px" },
+			{ textContent: "Range: 200 - 5,000 ms" },
+		),
+	);
+	return wrapper;
 };
