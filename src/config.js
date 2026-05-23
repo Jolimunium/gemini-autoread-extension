@@ -24,8 +24,7 @@ const GAR_Config = {
 	SELECTORS: {
 		CHAT_CONTAINER: 'infinite-scroller[data-test-id="chat-history-container"]',
 		CHAT_CONTAINER_FALLBACK: "main.chat-app",
-		VOLUME_ICON:
-			'mat-icon[fonticon="play_arrow"], mat-icon[fonticon="volume_up"]',
+		VOLUME_ICON: 'mat-icon[fonticon="play_arrow"]',
 		PAUSE_ICON: 'mat-icon[fonticon="pause"]',
 	},
 
