@@ -1,240 +1,268 @@
-"use strict";
-
 /**
  * GAR_Observer: Manages the MutationObserver and the core auto-read playback logic.
  * Watches for new Gemini response volume icons and triggers audio playback automatically.
  */
 const GAR_Observer = (() => {
-  const state = GAR_State.data;
-  const { DOM, Logger } = GAR_Utils;
+	const state = GAR_State.data;
+	const { DOM, Logger } = GAR_Utils;
 
-  // ─── Playback Helpers ───────────────────────────────────
+	// ─── Playback Helpers ───────────────────────────────────
 
-  /**
-   * Checks if the Gemini UI is currently playing audio via a pre-queried pause icon list.
-   * @param {NodeList} pauseIcons - Result of querySelectorAll(PAUSE_ICON).
-   * @returns {boolean} True if audio is already playing.
-   */
-  const checkAlreadyReading = (pauseIcons) => {
-    if (pauseIcons.length > 0) {
-      Logger.log(
-        state.debugMode,
-        "Auto-read: Already reading (Pause icon found).",
-      );
-      return true;
-    }
-    Logger.log(
-      state.debugMode,
-      "Auto-read: Not reading (Pause icon not found).",
-    );
-    return false;
-  };
+	/**
+	 * Checks if the Gemini UI is currently playing audio via a pre-queried pause icon list.
+	 * @param {NodeList} pauseIcons - Result of querySelectorAll(PAUSE_ICON).
+	 * @returns {boolean} True if audio is already playing.
+	 */
+	const checkAlreadyReading = (pauseIcons) => {
+		if (pauseIcons.length > 0) {
+			Logger.log(
+				state.debugMode,
+				"Auto-read: Already reading (Pause icon found).",
+			);
+			return true;
+		}
+		Logger.log(
+			state.debugMode,
+			"Auto-read: Not reading (Pause icon not found).",
+		);
+		return false;
+	};
 
-  /**
-   * Attempts to trigger playback using a pre-queried volume icon list.
-   * Waits for the pause icon to confirm playback has started.
-   * @param {NodeList} volumeIcons - Result of querySelectorAll(VOLUME_ICON).
-   * @returns {Promise<boolean>} True if playback was successfully triggered.
-   */
-  const tryTriggerPlay = async (volumeIcons) => {
-    if (volumeIcons.length === 0) {
-      Logger.log(state.debugMode, "Auto-read: No volume_up icon found.");
-      return false;
-    }
+	/**
+	 * Attempts to trigger playback using a pre-queried volume icon list (the more options icon).
+	 * Opens the menu, waits for the TTS button to appear, and clicks it.
+	 * @param {NodeList} volumeIcons - Result of querySelectorAll(VOLUME_ICON).
+	 * @returns {Promise<boolean>} True if playback was successfully triggered.
+	 */
+	const tryTriggerPlay = async (volumeIcons) => {
+		if (volumeIcons.length === 0) {
+			Logger.log(state.debugMode, "Auto-read: No more options button found.");
+			return false;
+		}
 
-    const vIcon = volumeIcons[volumeIcons.length - 1];
-    const vBtn = vIcon.closest("button");
+		const vIcon = volumeIcons.item(volumeIcons.length - 1);
+		const vBtn = vIcon.closest("button");
 
-    if (vBtn) {
-      vBtn.click();
-      Logger.log(state.debugMode, "Auto-read: Clicked volume_up (vBtn).");
-    } else {
-      vIcon.click();
-      Logger.log(state.debugMode, "Auto-read: Clicked volume_up (vIcon).");
-    }
+		if (vBtn) {
+			vBtn.click();
+			Logger.log(state.debugMode, "Auto-read: Clicked more options (vBtn).");
+		} else {
+			vIcon.click();
+			Logger.log(state.debugMode, "Auto-read: Clicked more options (vIcon).");
+		}
 
-    // waitForState polls fresh queries intentionally — it must detect state change over time.
-    const isPlaying = await DOM.waitForState(
-      () =>
-        document.querySelectorAll(GAR_Config.SELECTORS.PAUSE_ICON).length > 0,
-      GAR_Config.TIMINGS.WAIT_TIMEOUT,
-    );
-    Logger.log(
-      state.debugMode,
-      `Auto-read: ${isPlaying ? "Successfully started" : "State transition timeout"}.`,
-    );
-    return isPlaying;
-  };
+		// Wait for the TTS button to appear in the menu/DOM
+		Logger.log(
+			state.debugMode,
+			"Auto-read: Waiting for TTS menu item to appear...",
+		);
+		const ttsButtonAppeared = await DOM.waitForState(
+			() => document.querySelector(GAR_Config.SELECTORS.TTS_BUTTON) !== null,
+			1500,
+			100,
+		);
 
-  // ─── Auto-Read Process ──────────────────────────────────
+		if (!ttsButtonAppeared) {
+			Logger.log(state.debugMode, "Auto-read: TTS menu item did not appear.");
+			return false;
+		}
 
-  /** Guard flag to prevent multiple concurrent auto-read processes. */
-  let isProcessing = false;
+		const ttsButton = document.querySelector(GAR_Config.SELECTORS.TTS_BUTTON);
+		if (ttsButton) {
+			ttsButton.click();
+			Logger.log(state.debugMode, "Auto-read: Clicked TTS button.");
 
-  /**
-   * Core auto-read logic. Retries up to `maxAttempts` times to trigger playback.
-   * Queries both pause and volume icons once per iteration to avoid redundant DOM lookups.
-   * Updates the mic icon state to reflect working, normal (success), or error.
-   * @param {HTMLElement|null} trackingNode - The DOM node to mark as processed.
-   * @returns {Promise<void>}
-   */
-  const processAutoRead = async (trackingNode) => {
-    if (!state.isAutoReadEnabled || isProcessing) return;
-    isProcessing = true;
+			// Confirm playback started in the background, but immediately return true since we clicked it
+			DOM.waitForState(
+				() =>
+					document.querySelectorAll(GAR_Config.SELECTORS.PAUSE_ICON).length > 0,
+				GAR_Config.TIMINGS.WAIT_TIMEOUT,
+			).then((isPlaying) => {
+				Logger.log(
+					state.debugMode,
+					`Auto-read: Playback state transition: ${
+						isPlaying
+							? "Playing confirmed"
+							: "No pause icon detected (could be playing without pause icon visible)"
+					}.`,
+				);
+			});
 
-    try {
-      if (trackingNode) {
-        trackingNode.dataset.garProcessed = "true";
-      }
+			return true;
+		}
 
-      Logger.log(state.debugMode, "Process: Starting auto-read logic...");
-      GAR_UI.setMicState("working");
-      await DOM.sleep(GAR_Config.TIMINGS.SLEEP_INTERVAL);
+		return false;
+	};
 
-      for (let i = 1; i <= state.maxAttempts; i++) {
-        Logger.log(
-          state.debugMode,
-          `Process: Attempt ${i}/${state.maxAttempts}`,
-        );
+	// ─── Auto-Read Process ──────────────────────────────────
 
-        // Query both collections once per iteration — results passed into helpers below.
-        const pauseIcons = document.querySelectorAll(
-          GAR_Config.SELECTORS.PAUSE_ICON,
-        );
-        const volumeIcons = document.querySelectorAll(
-          GAR_Config.SELECTORS.VOLUME_ICON,
-        );
+	/** Guard flag to prevent multiple concurrent auto-read processes. */
+	let isProcessing = false;
 
-        if (checkAlreadyReading(pauseIcons)) {
-          GAR_UI.setMicState("normal");
-          return;
-        }
-        if (await tryTriggerPlay(volumeIcons)) {
-          GAR_UI.setMicState("normal");
-          return;
-        }
-        await DOM.sleep(GAR_Config.TIMINGS.SLEEP_INTERVAL);
-      }
+	/**
+	 * Core auto-read logic. Retries up to `maxAttempts` times to trigger playback.
+	 * Queries both pause and volume icons once per iteration to avoid redundant DOM lookups.
+	 * Updates the mic icon state to reflect working, normal (success), or error.
+	 * @param {HTMLElement|null} trackingNode - The DOM node to mark as processed.
+	 * @returns {Promise<void>}
+	 */
+	const processAutoRead = async (trackingNode) => {
+		if (!state.isAutoReadEnabled || isProcessing) return;
+		isProcessing = true;
 
-      Logger.log(
-        state.debugMode,
-        `Auto-read: Failed after ${state.maxAttempts} attempts.`,
-      );
-      GAR_UI.setMicState("error");
-    } finally {
-      isProcessing = false;
-    }
-  };
+		try {
+			if (trackingNode) {
+				trackingNode.dataset.garProcessed = "true";
+			}
 
-  // ─── Mutation Observer ──────────────────────────────────
+			Logger.log(state.debugMode, "Process: Starting auto-read logic...");
+			GAR_UI.setMicState("working");
+			await DOM.sleep(GAR_Config.TIMINGS.SLEEP_INTERVAL);
 
-  /** The active MutationObserver instance watching for new Gemini responses. */
-  let activeObserver = null;
+			for (let i = 1; i <= state.maxAttempts; i++) {
+				Logger.log(
+					state.debugMode,
+					`Process: Attempt ${i}/${state.maxAttempts}`,
+				);
 
-  /**
-   * Inspects DOM mutations to check whether a new volume icon was added.
-   * @param {MutationRecord[]} mutations - List of DOM mutation records.
-   * @returns {boolean} True if a volume icon was found in the added nodes.
-   */
-  const isVolumeIconAdded = (mutations) => {
-    for (const m of mutations) {
-      for (const node of m.addedNodes) {
-        if (node.nodeType !== 1) continue;
-        if (
-          node.matches?.(GAR_Config.SELECTORS.VOLUME_ICON) ||
-          node.querySelector?.(GAR_Config.SELECTORS.VOLUME_ICON)
-        ) {
-          return true;
-        }
-      }
-    }
-    return false;
-  };
+				// Query both collections once per iteration — results passed into helpers below.
+				const pauseIcons = document.querySelectorAll(
+					GAR_Config.SELECTORS.PAUSE_ICON,
+				);
+				const volumeIcons = document.querySelectorAll(
+					GAR_Config.SELECTORS.VOLUME_ICON,
+				);
 
-  /**
-   * Fired after the debounce delay when a new volume icon is detected in the DOM.
-   * Checks for a new, unprocessed icon and triggers auto-read if found.
-   */
-  const handleMutationAdded = () => {
-    const volumeIcons = document.querySelectorAll(
-      GAR_Config.SELECTORS.VOLUME_ICON,
-    );
-    if (volumeIcons.length === 0) return;
+				if (checkAlreadyReading(pauseIcons)) {
+					GAR_UI.setMicState("normal");
+					return;
+				}
+				if (await tryTriggerPlay(volumeIcons)) {
+					GAR_UI.setMicState("normal");
+					return;
+				}
+				await DOM.sleep(GAR_Config.TIMINGS.SLEEP_INTERVAL);
+			}
 
-    const lastIcon = volumeIcons[volumeIcons.length - 1];
-    const trackingNode =
-      lastIcon.closest("button")?.parentElement || lastIcon.parentElement;
+			Logger.log(
+				state.debugMode,
+				`Auto-read: Failed after ${state.maxAttempts} attempts.`,
+			);
+			GAR_UI.setMicState("error");
+		} finally {
+			isProcessing = false;
+		}
+	};
 
-    if (trackingNode && !trackingNode.dataset.garProcessed) {
-      Logger.log(
-        state.debugMode,
-        "Observer: New volume read icon detected, processing...",
-      );
-      processAutoRead(trackingNode);
-    }
-  };
+	// ─── Mutation Observer ──────────────────────────────────
 
-  return {
-    /**
-     * Connects or disconnects the MutationObserver based on the current auto-read state.
-     * Uses the narrowest available DOM container as the observation target to minimize
-     * unnecessary callback invocations. Falls back to document.body if the chat area
-     * is not yet in the DOM.
-     * Clears any pending debounce timer when disabling.
-     */
-    toggle: () => {
-      if (!activeObserver) return;
+	/** The active MutationObserver instance watching for new Gemini responses. */
+	let activeObserver = null;
 
-      // Always disconnect first to avoid stacking observations if the target changes.
-      activeObserver.disconnect();
+	/**
+	 * Inspects DOM mutations to check whether a new volume icon was added.
+	 * @param {MutationRecord[]} mutations - List of DOM mutation records.
+	 * @returns {boolean} True if a volume icon was found in the added nodes.
+	 */
+	const isVolumeIconAdded = (mutations) => {
+		for (const m of mutations) {
+			for (const node of m.addedNodes) {
+				if (node.nodeType !== 1) continue;
+				if (
+					node.matches?.(GAR_Config.SELECTORS.VOLUME_ICON) ||
+					node.querySelector?.(GAR_Config.SELECTORS.VOLUME_ICON)
+				) {
+					return true;
+				}
+			}
+		}
+		return false;
+	};
 
-      if (!state.isAutoReadEnabled) {
-        if (state.timeoutId) {
-          clearTimeout(state.timeoutId);
-          state.timeoutId = null;
-        }
-        return;
-      }
+	/**
+	 * Fired after the debounce delay when a new volume icon is detected in the DOM.
+	 * Checks for a new, unprocessed icon and triggers auto-read if found.
+	 */
+	const handleMutationAdded = () => {
+		const volumeIcons = document.querySelectorAll(
+			GAR_Config.SELECTORS.VOLUME_ICON,
+		);
+		if (volumeIcons.length === 0) return;
 
-      // Prefer the narrowest available container to reduce mutation noise.
-      // CHAT_CONTAINER covers the main message area; fallback covers older Gemini layouts.
-      const chatContainer =
-        document.querySelector(GAR_Config.SELECTORS.CHAT_CONTAINER) ||
-        document.querySelector(GAR_Config.SELECTORS.CHAT_CONTAINER_FALLBACK) ||
-        document.body;
+		const lastIcon = volumeIcons.item(volumeIcons.length - 1);
+		const trackingNode =
+			lastIcon.closest("button")?.parentElement || lastIcon.parentElement;
 
-      Logger.log(
-        state.debugMode,
-        `Observer: Connecting to <${chatContainer.tagName?.toLowerCase() ?? "body"}>`,
-      );
+		if (trackingNode && !trackingNode.dataset.garProcessed) {
+			Logger.log(
+				state.debugMode,
+				"Observer: New response menu icon detected, processing...",
+			);
+			processAutoRead(trackingNode);
+		}
+	};
 
-      activeObserver.observe(chatContainer, {
-        childList: true,
-        subtree: true,
-        attributes: false,
-      });
-    },
+	return {
+		/**
+		 * Connects or disconnects the MutationObserver based on the current auto-read state.
+		 * Uses the narrowest available DOM container as the observation target to minimize
+		 * unnecessary callback invocations. Falls back to document.body if the chat area
+		 * is not yet in the DOM.
+		 * Clears any pending debounce timer when disabling.
+		 */
+		toggle: () => {
+			if (!activeObserver) return;
 
-    /**
-     * Triggers an immediate check for an existing unprocessed volume icon on the page.
-     * Used when auto-read is turned ON to catch icons that are already in the DOM.
-     */
-    checkExisting: handleMutationAdded,
+			// Always disconnect first to avoid stacking observations if the target changes.
+			activeObserver.disconnect();
 
-    /**
-     * Creates the MutationObserver with a debounced callback and starts observing.
-     */
-    setup: () => {
-      const observerCallback = (mutations) => {
-        if (!state.isAutoReadEnabled) return;
-        if (!isVolumeIconAdded(mutations)) return;
+			if (!state.isAutoReadEnabled) {
+				if (state.timeoutId) {
+					clearTimeout(state.timeoutId);
+					state.timeoutId = null;
+				}
+				return;
+			}
 
-        if (state.timeoutId) clearTimeout(state.timeoutId);
-        state.timeoutId = setTimeout(handleMutationAdded, state.debounceTime);
-      };
+			// Prefer the narrowest available container to reduce mutation noise.
+			// CHAT_CONTAINER covers the main message area; fallback covers older Gemini layouts.
+			const chatContainer =
+				document.querySelector(GAR_Config.SELECTORS.CHAT_CONTAINER) ||
+				document.querySelector(GAR_Config.SELECTORS.CHAT_CONTAINER_FALLBACK) ||
+				document.body;
 
-      activeObserver = new MutationObserver(observerCallback);
-      GAR_Observer.toggle();
-    },
-  };
+			Logger.log(
+				state.debugMode,
+				`Observer: Connecting to <${chatContainer.tagName?.toLowerCase() ?? "body"}>`,
+			);
+
+			activeObserver.observe(chatContainer, {
+				childList: true,
+				subtree: true,
+				attributes: false,
+			});
+		},
+
+		/**
+		 * Triggers an immediate check for an existing unprocessed volume icon on the page.
+		 * Used when auto-read is turned ON to catch icons that are already in the DOM.
+		 */
+		checkExisting: handleMutationAdded,
+
+		/**
+		 * Creates the MutationObserver with a debounced callback and starts observing.
+		 */
+		setup: () => {
+			const observerCallback = (mutations) => {
+				if (!state.isAutoReadEnabled) return;
+				if (!isVolumeIconAdded(mutations)) return;
+
+				if (state.timeoutId) clearTimeout(state.timeoutId);
+				state.timeoutId = setTimeout(handleMutationAdded, state.debounceTime);
+			};
+
+			activeObserver = new MutationObserver(observerCallback);
+			GAR_Observer.toggle();
+		},
+	};
 })();
