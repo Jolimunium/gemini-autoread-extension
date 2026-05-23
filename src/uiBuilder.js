@@ -1,5 +1,3 @@
-"use strict";
-
 /**
  * GAR_UI: Responsible for building and managing the Extension's User Interface.
  * Handles the floating toggle button, settings panel, and real-time UI updates.
@@ -335,7 +333,6 @@ const GAR_UI = (() => {
 						}
 					}, GAR_Config.TIMINGS.WAIT_TIMEOUT);
 					break;
-				case "normal":
 				default:
 					mic.style.color = "";
 					mic.style.textShadow = "none";

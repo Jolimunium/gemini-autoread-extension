@@ -1,9 +1,8 @@
-"use strict";
-
 /**
  * GAR_Config: Centralized configuration constants for Gemini Auto-Read.
  * All selectors, storage keys, timings, defaults, colors, and layout values are defined here.
  */
+// biome-ignore lint/correctness/noUnusedVariables: shared globally
 const GAR_Config = {
 	/** Prefix string prepended to all debug console messages. */
 	LOG_PREFIX: "[Gemini Auto-Read]:",

@@ -1,5 +1,3 @@
-"use strict";
-
 /**
  * GAR_Theme: The global CSS stylesheet for the Gemini Auto-Read Shadow DOM.
  * Defines CSS custom properties (design tokens), base layout, component styles,
@@ -7,6 +5,7 @@
  * Color and layout values are sourced from GAR_Config to ensure a single source of truth.
  * @type {string}
  */
+// biome-ignore lint/correctness/noUnusedVariables: shared globally
 const GAR_Theme = `
   :host {
     --bg-panel: #0f172a;

@@ -1,4 +1,3 @@
-"use strict";
 globalThis.GAR_Components = globalThis.GAR_Components || {};
 
 /**
@@ -37,7 +36,7 @@ globalThis.GAR_Components.RetryInput = (state, createEl) => {
 
 	// Save the updated retry count whenever the user changes the input value.
 	attInput.onchange = (e) => {
-		state.maxAttempts = Number.parseInt(e.target.value);
+		state.maxAttempts = Number.parseInt(e.target.value, 10);
 		GAR_State.save();
 	};
 

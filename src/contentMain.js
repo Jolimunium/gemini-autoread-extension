@@ -1,5 +1,3 @@
-"use strict";
-
 /**
  * GAR_App: The main application entry point for Gemini Auto-Read.
  * Bootstraps all modules in the correct order and exposes the top-level

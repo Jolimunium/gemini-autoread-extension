@@ -1,4 +1,3 @@
-"use strict";
 // Initialize the shared component namespace to prevent naming collisions.
 globalThis.GAR_Components = globalThis.GAR_Components || {};
 

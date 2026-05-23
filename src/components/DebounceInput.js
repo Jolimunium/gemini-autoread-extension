@@ -1,4 +1,3 @@
-"use strict";
 globalThis.GAR_Components = globalThis.GAR_Components || {};
 
 /**
@@ -37,7 +36,7 @@ globalThis.GAR_Components.DebounceInput = (state, createEl) => {
 
 	// Save the updated debounce time whenever the user changes the input value.
 	debInput.onchange = (e) => {
-		state.debounceTime = Number.parseInt(e.target.value);
+		state.debounceTime = Number.parseInt(e.target.value, 10);
 		GAR_State.save();
 	};
 

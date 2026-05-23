@@ -1,9 +1,8 @@
-"use strict";
-
 /**
  * GAR_Shortcuts: Manages global keyboard shortcut registration for the extension.
  * Handles the toggle auto-read and toggle settings panel shortcuts.
  */
+// biome-ignore lint/correctness/noUnusedVariables: shared globally
 const GAR_Shortcuts = (() => {
 	const state = GAR_State.data;
 	const { Logger } = GAR_Utils;

@@ -1,8 +1,7 @@
-"use strict";
-
 /**
  * GAR_Utils: General purpose utility functions for the Gemini Auto-Read extension.
  */
+// biome-ignore lint/correctness/noUnusedVariables: shared globally
 const GAR_Utils = {
 	/**
 	 * DOM utility functions for element creation and state observation.
@@ -51,7 +50,7 @@ const GAR_Utils = {
 	 */
 	Logger: (() => {
 		/** @type {Array<object>} Internal log history buffer. */
-		let logHistory = [];
+		const logHistory = [];
 
 		return {
 			/**

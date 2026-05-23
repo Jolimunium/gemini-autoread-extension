@@ -1,5 +1,3 @@
-"use strict";
-
 /**
  * GAR_Storage: Handles all chrome.storage and sessionStorage persistence for the extension.
  * Responsible for reading, writing, and listening to setting changes across browser tabs.
@@ -33,11 +31,11 @@ const GAR_Storage = (() => {
 				}
 				break;
 			case GAR_Config.STORAGE_KEYS.MAX_ATTEMPTS:
-				data.maxAttempts = Number.parseInt(newValue) || 5;
+				data.maxAttempts = Number.parseInt(newValue, 10) || 5;
 				updates.shouldUpdateSettings = true;
 				break;
 			case GAR_Config.STORAGE_KEYS.DEBOUNCE_TIME:
-				data.debounceTime = Number.parseInt(newValue) || 1000;
+				data.debounceTime = Number.parseInt(newValue, 10) || 1000;
 				updates.shouldUpdateSettings = true;
 				break;
 			case GAR_Config.STORAGE_KEYS.DEBUG_MODE:
@@ -79,15 +77,15 @@ const GAR_Storage = (() => {
 				const store = await chrome.storage.local.get(
 					GAR_Config.STORAGE_KEYS.ENABLED,
 				);
-				const val = store[GAR_Config.STORAGE_KEYS.ENABLED];
+				const val = store.gemini_autoread_enabled;
 				if (val !== undefined) return val !== false && val !== "false";
 			}
 			const defStore = await chrome.storage.local.get(
 				GAR_Config.STORAGE_KEYS.DEFAULT_ENABLED,
 			);
 			return (
-				defStore[GAR_Config.STORAGE_KEYS.DEFAULT_ENABLED] !== false &&
-				defStore[GAR_Config.STORAGE_KEYS.DEFAULT_ENABLED] !== "false"
+				defStore.gemini_autoread_default_enabled !== false &&
+				defStore.gemini_autoread_default_enabled !== "false"
 			);
 		},
 
@@ -100,10 +98,10 @@ const GAR_Storage = (() => {
 			const initialStore = await chrome.storage.local.get(null);
 
 			data.defaultSyncMode =
-				initialStore[GAR_Config.STORAGE_KEYS.DEFAULT_SYNC_MODE] || "global";
+				initialStore.gemini_autoread_default_sync_mode || "global";
 			data.defaultEnabled =
-				initialStore[GAR_Config.STORAGE_KEYS.DEFAULT_ENABLED] !== false &&
-				initialStore[GAR_Config.STORAGE_KEYS.DEFAULT_ENABLED] !== "false";
+				initialStore.gemini_autoread_default_enabled !== false &&
+				initialStore.gemini_autoread_default_enabled !== "false";
 
 			data.syncMode = sessionStorage.getItem(GAR_Config.STORAGE_KEYS.SYNC_MODE);
 			if (!data.syncMode) {
@@ -117,19 +115,17 @@ const GAR_Storage = (() => {
 			data.isAutoReadEnabled = await GAR_Storage.getEnabledState(data.syncMode);
 
 			data.maxAttempts =
-				Number.parseInt(initialStore[GAR_Config.STORAGE_KEYS.MAX_ATTEMPTS]) ||
-				5;
+				Number.parseInt(initialStore.gemini_autoread_max_attempts, 10) || 5;
 			data.debounceTime =
-				Number.parseInt(initialStore[GAR_Config.STORAGE_KEYS.DEBOUNCE_TIME]) ||
-				1000;
+				Number.parseInt(initialStore.gemini_autoread_debounce, 10) || 1000;
 			data.debugMode =
-				initialStore[GAR_Config.STORAGE_KEYS.DEBUG_MODE] === true ||
-				initialStore[GAR_Config.STORAGE_KEYS.DEBUG_MODE] === "true";
+				initialStore.gemini_autoread_debug === true ||
+				initialStore.gemini_autoread_debug === "true";
 			data.shortcutToggle =
-				initialStore[GAR_Config.STORAGE_KEYS.SHORTCUT_TOGGLE] ||
+				initialStore.gemini_autoread_shortcut_toggle ||
 				GAR_Config.DEFAULTS.SHORTCUT_TOGGLE;
 			data.shortcutSettings =
-				initialStore[GAR_Config.STORAGE_KEYS.SHORTCUT_SETTINGS] ||
+				initialStore.gemini_autoread_shortcut_settings ||
 				GAR_Config.DEFAULTS.SHORTCUT_SETTINGS;
 		},
 

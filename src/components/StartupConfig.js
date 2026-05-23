@@ -1,4 +1,3 @@
-"use strict";
 globalThis.GAR_Components = globalThis.GAR_Components || {};
 
 /**

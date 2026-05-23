@@ -1,5 +1,3 @@
-"use strict";
-
 /**
  * GAR_Observer: Manages the MutationObserver and the core auto-read playback logic.
  * Watches for new Gemini response volume icons and triggers audio playback automatically.
@@ -42,7 +40,7 @@ const GAR_Observer = (() => {
 			return false;
 		}
 
-		const vIcon = volumeIcons[volumeIcons.length - 1];
+		const vIcon = volumeIcons.item(volumeIcons.length - 1);
 		const vBtn = vIcon.closest("button");
 
 		if (vBtn) {
@@ -161,7 +159,7 @@ const GAR_Observer = (() => {
 		);
 		if (volumeIcons.length === 0) return;
 
-		const lastIcon = volumeIcons[volumeIcons.length - 1];
+		const lastIcon = volumeIcons.item(volumeIcons.length - 1);
 		const trackingNode =
 			lastIcon.closest("button")?.parentElement || lastIcon.parentElement;
 

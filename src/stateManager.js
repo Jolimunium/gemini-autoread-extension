@@ -1,10 +1,9 @@
-"use strict";
-
 /**
  * GAR_State: Manages the application's in-memory state object.
  * Provides the central `data` store shared across all modules.
  * Persistence (chrome.storage / sessionStorage) is handled by GAR_Storage.
  */
+// biome-ignore lint/correctness/noUnusedVariables: shared globally
 const GAR_State = (() => {
 	/**
 	 * The central in-memory state object shared across the application.
