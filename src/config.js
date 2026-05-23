@@ -24,7 +24,9 @@ const GAR_Config = {
 	SELECTORS: {
 		CHAT_CONTAINER: 'infinite-scroller[data-test-id="chat-history-container"]',
 		CHAT_CONTAINER_FALLBACK: "main.chat-app",
-		VOLUME_ICON: 'mat-icon[fonticon="play_arrow"]',
+		VOLUME_ICON: 'mat-icon[fonticon="more_horiz"]',
+		TTS_BUTTON:
+			'gem-menu-item[data-test-id="tts-button"], gem-menu-item[value="tts"]',
 		PAUSE_ICON: 'mat-icon[fonticon="pause"]',
 	},
 

@@ -29,14 +29,14 @@ const GAR_Observer = (() => {
 	};
 
 	/**
-	 * Attempts to trigger playback using a pre-queried volume icon list.
-	 * Waits for the pause icon to confirm playback has started.
+	 * Attempts to trigger playback using a pre-queried volume icon list (the more options icon).
+	 * Opens the menu, waits for the TTS button to appear, and clicks it.
 	 * @param {NodeList} volumeIcons - Result of querySelectorAll(VOLUME_ICON).
 	 * @returns {Promise<boolean>} True if playback was successfully triggered.
 	 */
 	const tryTriggerPlay = async (volumeIcons) => {
 		if (volumeIcons.length === 0) {
-			Logger.log(state.debugMode, "Auto-read: No volume_up icon found.");
+			Logger.log(state.debugMode, "Auto-read: No more options button found.");
 			return false;
 		}
 
@@ -45,23 +45,53 @@ const GAR_Observer = (() => {
 
 		if (vBtn) {
 			vBtn.click();
-			Logger.log(state.debugMode, "Auto-read: Clicked volume_up (vBtn).");
+			Logger.log(state.debugMode, "Auto-read: Clicked more options (vBtn).");
 		} else {
 			vIcon.click();
-			Logger.log(state.debugMode, "Auto-read: Clicked volume_up (vIcon).");
+			Logger.log(state.debugMode, "Auto-read: Clicked more options (vIcon).");
 		}
 
-		// waitForState polls fresh queries intentionally — it must detect state change over time.
-		const isPlaying = await DOM.waitForState(
-			() =>
-				document.querySelectorAll(GAR_Config.SELECTORS.PAUSE_ICON).length > 0,
-			GAR_Config.TIMINGS.WAIT_TIMEOUT,
-		);
+		// Wait for the TTS button to appear in the menu/DOM
 		Logger.log(
 			state.debugMode,
-			`Auto-read: ${isPlaying ? "Successfully started" : "State transition timeout"}.`,
+			"Auto-read: Waiting for TTS menu item to appear...",
 		);
-		return isPlaying;
+		const ttsButtonAppeared = await DOM.waitForState(
+			() => document.querySelector(GAR_Config.SELECTORS.TTS_BUTTON) !== null,
+			1500,
+			100,
+		);
+
+		if (!ttsButtonAppeared) {
+			Logger.log(state.debugMode, "Auto-read: TTS menu item did not appear.");
+			return false;
+		}
+
+		const ttsButton = document.querySelector(GAR_Config.SELECTORS.TTS_BUTTON);
+		if (ttsButton) {
+			ttsButton.click();
+			Logger.log(state.debugMode, "Auto-read: Clicked TTS button.");
+
+			// Confirm playback started in the background, but immediately return true since we clicked it
+			DOM.waitForState(
+				() =>
+					document.querySelectorAll(GAR_Config.SELECTORS.PAUSE_ICON).length > 0,
+				GAR_Config.TIMINGS.WAIT_TIMEOUT,
+			).then((isPlaying) => {
+				Logger.log(
+					state.debugMode,
+					`Auto-read: Playback state transition: ${
+						isPlaying
+							? "Playing confirmed"
+							: "No pause icon detected (could be playing without pause icon visible)"
+					}.`,
+				);
+			});
+
+			return true;
+		}
+
+		return false;
 	};
 
 	// ─── Auto-Read Process ──────────────────────────────────
@@ -166,7 +196,7 @@ const GAR_Observer = (() => {
 		if (trackingNode && !trackingNode.dataset.garProcessed) {
 			Logger.log(
 				state.debugMode,
-				"Observer: New volume read icon detected, processing...",
+				"Observer: New response menu icon detected, processing...",
 			);
 			processAutoRead(trackingNode);
 		}
