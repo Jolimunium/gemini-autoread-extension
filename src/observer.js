@@ -72,23 +72,23 @@ const GAR_Observer = (() => {
 			ttsButton.click();
 			Logger.log(state.debugMode, "Auto-read: Clicked TTS button.");
 
-			// Confirm playback started in the background, but immediately return true since we clicked it
-			DOM.waitForState(
+			// Await the state transition to verify if playback actually started
+			const isPlaying = await DOM.waitForState(
 				() =>
 					document.querySelectorAll(GAR_Config.SELECTORS.PAUSE_ICON).length > 0,
 				GAR_Config.TIMINGS.WAIT_TIMEOUT,
-			).then((isPlaying) => {
-				Logger.log(
-					state.debugMode,
-					`Auto-read: Playback state transition: ${
-						isPlaying
-							? "Playing confirmed"
-							: "No pause icon detected (could be playing without pause icon visible)"
-					}.`,
-				);
-			});
+			);
 
-			return true;
+			Logger.log(
+				state.debugMode,
+				`Auto-read: Playback state transition: ${
+					isPlaying
+						? "Playing confirmed"
+						: "Failed to start (No pause icon detected)"
+				}.`,
+			);
+
+			return isPlaying;
 		}
 
 		return false;
