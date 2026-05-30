@@ -38,8 +38,10 @@ const GAR_Config = {
 
 	/** Timing values (in milliseconds) used for delays and timeouts. */
 	TIMINGS: {
-		SLEEP_INTERVAL: 500,
-		WAIT_TIMEOUT: 3000,
+		RETRY_INTERVAL: 250,
+		PLAYBACK_CONFIRM_TIMEOUT: 2500,
+		PAGE_LOAD_TIMEOUT: 1500,
+		ERROR_RESET_TIMEOUT: 3000,
 	},
 
 	/** Accent color palette used throughout the UI. Single source of truth for all color values. */
