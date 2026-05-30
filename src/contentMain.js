@@ -22,20 +22,20 @@ const GAR_App = (() => {
 
 		const isChatPage = /^\/app\/.+/.test(globalThis.location.pathname);
 		const containerSelector = `${GAR_Config.SELECTORS.CHAT_CONTAINER}, ${GAR_Config.SELECTORS.CHAT_CONTAINER_FALLBACK}`;
-		const volumeSelector = GAR_Config.SELECTORS.VOLUME_ICON;
+		const moreOptionsSelector = GAR_Config.SELECTORS.MORE_OPTIONS_ICON;
 
 		if (isChatPage) {
 			await GAR_Utils.DOM.waitForState(
 				() =>
 					document.querySelector(containerSelector) ||
-					document.querySelector(volumeSelector),
+					document.querySelector(moreOptionsSelector),
 				GAR_Config.TIMINGS.PAGE_LOAD_TIMEOUT,
 			);
 		}
 
 		const selectors = [
 			{ name: "Chat Container", selector: containerSelector },
-			{ name: "Volume Icon", selector: volumeSelector },
+			{ name: "More Options Icon", selector: moreOptionsSelector },
 		];
 
 		const missing = selectors

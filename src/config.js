@@ -24,7 +24,7 @@ const GAR_Config = {
 	SELECTORS: {
 		CHAT_CONTAINER: 'infinite-scroller[data-test-id="chat-history-container"]',
 		CHAT_CONTAINER_FALLBACK: "main.chat-app",
-		VOLUME_ICON: 'mat-icon[fonticon="more_horiz"]',
+		MORE_OPTIONS_ICON: 'mat-icon[fonticon="more_horiz"]',
 		TTS_BUTTON:
 			'gem-menu-item[data-test-id="tts-button"], gem-menu-item[value="tts"]',
 		PAUSE_ICON: 'mat-icon[fonticon="pause"]',
@@ -47,6 +47,8 @@ const GAR_Config = {
 		PLAYBACK_CONFIRM_TIMEOUT: 2500,
 		PAGE_LOAD_TIMEOUT: 1500,
 		ERROR_RESET_TIMEOUT: 3000,
+		TTS_MENU_TIMEOUT: 1500,
+		MENU_POLL_INTERVAL: 100,
 	},
 
 	/** Color palette used throughout the UI. Single source of truth for all color values. */

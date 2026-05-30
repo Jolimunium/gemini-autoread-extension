@@ -29,20 +29,20 @@ const GAR_Observer = (() => {
 	};
 
 	/**
-	 * Attempts to trigger playback using a pre-queried volume icon list (the more options icon).
+	 * Attempts to trigger playback using a pre-queried list of "more options" icons.
 	 * Opens the menu, waits for the TTS button to appear, and clicks it.
-	 * @param {NodeList} volumeIcons - Result of querySelectorAll(VOLUME_ICON).
+	 * @param {NodeList} optionIcons - Result of querySelectorAll(MORE_OPTIONS_ICON).
 	 * @returns {Promise<boolean>} True if playback was successfully triggered.
 	 */
-	const tryTriggerPlay = async (volumeIcons) => {
-		if (volumeIcons.length === 0) {
+	const tryTriggerPlay = async (optionIcons) => {
+		if (optionIcons.length === 0) {
 			Logger.log(state.debugMode, "Auto-read: No more options button found.");
 			return false;
 		}
 
-		const vIcon = volumeIcons.item(volumeIcons.length - 1);
+		const optIcon = optionIcons.item(optionIcons.length - 1);
 		// The element that toggles the options menu — a button when available, else the icon.
-		const menuTrigger = vIcon.closest("button") || vIcon;
+		const menuTrigger = optIcon.closest("button") || optIcon;
 
 		menuTrigger.click();
 		Logger.log(state.debugMode, "Auto-read: Clicked more options.");
@@ -54,8 +54,8 @@ const GAR_Observer = (() => {
 		);
 		const ttsButtonAppeared = await DOM.waitForState(
 			() => document.querySelector(GAR_Config.SELECTORS.TTS_BUTTON) !== null,
-			1500,
-			100,
+			GAR_Config.TIMINGS.TTS_MENU_TIMEOUT,
+			GAR_Config.TIMINGS.MENU_POLL_INTERVAL,
 		);
 
 		if (!ttsButtonAppeared) {
@@ -128,15 +128,15 @@ const GAR_Observer = (() => {
 				const pauseIcons = document.querySelectorAll(
 					GAR_Config.SELECTORS.PAUSE_ICON,
 				);
-				const volumeIcons = document.querySelectorAll(
-					GAR_Config.SELECTORS.VOLUME_ICON,
+				const optionIcons = document.querySelectorAll(
+					GAR_Config.SELECTORS.MORE_OPTIONS_ICON,
 				);
 
 				if (checkAlreadyReading(pauseIcons)) {
 					GAR_UI.setMicState("normal");
 					return;
 				}
-				if (await tryTriggerPlay(volumeIcons)) {
+				if (await tryTriggerPlay(optionIcons)) {
 					GAR_UI.setMicState("normal");
 					return;
 				}
@@ -159,17 +159,17 @@ const GAR_Observer = (() => {
 	let activeObserver = null;
 
 	/**
-	 * Inspects DOM mutations to check whether a new volume icon was added.
+	 * Inspects DOM mutations to check whether a new "more options" icon was added.
 	 * @param {MutationRecord[]} mutations - List of DOM mutation records.
-	 * @returns {boolean} True if a volume icon was found in the added nodes.
+	 * @returns {boolean} True if a more options icon was found in the added nodes.
 	 */
-	const isVolumeIconAdded = (mutations) => {
+	const isMoreOptionsIconAdded = (mutations) => {
 		for (const m of mutations) {
 			for (const node of m.addedNodes) {
 				if (node.nodeType !== 1) continue;
 				if (
-					node.matches?.(GAR_Config.SELECTORS.VOLUME_ICON) ||
-					node.querySelector?.(GAR_Config.SELECTORS.VOLUME_ICON)
+					node.matches?.(GAR_Config.SELECTORS.MORE_OPTIONS_ICON) ||
+					node.querySelector?.(GAR_Config.SELECTORS.MORE_OPTIONS_ICON)
 				) {
 					return true;
 				}
@@ -183,12 +183,12 @@ const GAR_Observer = (() => {
 	 * Checks for a new, unprocessed icon and triggers auto-read if found.
 	 */
 	const handleMutationAdded = () => {
-		const volumeIcons = document.querySelectorAll(
-			GAR_Config.SELECTORS.VOLUME_ICON,
+		const optionIcons = document.querySelectorAll(
+			GAR_Config.SELECTORS.MORE_OPTIONS_ICON,
 		);
-		if (volumeIcons.length === 0) return;
+		if (optionIcons.length === 0) return;
 
-		const lastIcon = volumeIcons.item(volumeIcons.length - 1);
+		const lastIcon = optionIcons.item(optionIcons.length - 1);
 		const trackingNode =
 			lastIcon.closest("button")?.parentElement || lastIcon.parentElement;
 
@@ -254,7 +254,7 @@ const GAR_Observer = (() => {
 		setup: () => {
 			const observerCallback = (mutations) => {
 				if (!state.isAutoReadEnabled) return;
-				if (!isVolumeIconAdded(mutations)) return;
+				if (!isMoreOptionsIconAdded(mutations)) return;
 
 				if (state.timeoutId) clearTimeout(state.timeoutId);
 				state.timeoutId = setTimeout(handleMutationAdded, state.debounceTime);
