@@ -9,7 +9,7 @@
 const GAR_Theme = `
   :host {
     --bg-panel: #0f172a;
-    --border-color: #334155;
+    --border-color: ${GAR_Config.COLORS.DIVIDER};
     --text-color: #f8fafc;
     --accent-green: ${GAR_Config.COLORS.GREEN};
     --accent-red: ${GAR_Config.COLORS.RED};
@@ -116,7 +116,7 @@ const GAR_Theme = `
 
   /* ─── Inputs ─────────────────────────────────────────── */
   input[type="number"], select, input[type="text"] {
-    background: #1e293b !important;
+    background: ${GAR_Config.COLORS.SURFACE} !important;
     border: 1px solid var(--border-color) !important;
     color: var(--text-color) !important;
     border-radius: 4px !important;

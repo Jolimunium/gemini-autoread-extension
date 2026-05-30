@@ -36,16 +36,11 @@ globalThis.GAR_Components.NumberSetting = ({
 		),
 	);
 
+	// Appearance (bg, border, color, padding) is owned by theme.js input rules;
+	// only the layout width is set here.
 	const input = createEl(
 		"input",
-		{
-			width: "100%",
-			padding: "6px",
-			background: GAR_Config.COLORS.INPUT_BG,
-			color: GAR_Config.COLORS.TEXT,
-			border: `1px solid ${GAR_Config.COLORS.BORDER}`,
-			borderRadius: "4px",
-		},
+		{ width: "100%" },
 		{ type: "number", value, min, max, id, name },
 	);
 	input.onchange = (e) => onChange(Number.parseInt(e.target.value, 10));

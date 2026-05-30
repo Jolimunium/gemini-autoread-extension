@@ -35,14 +35,8 @@ globalThis.GAR_Components.StartupConfig = (state, createEl) => {
 	);
 	const defToggleSelect = createEl(
 		"select",
-		{
-			padding: "4px",
-			background: GAR_Config.COLORS.INPUT_BG,
-			color: GAR_Config.COLORS.TEXT,
-			border: `1px solid ${GAR_Config.COLORS.BORDER_LIGHT}`,
-			borderRadius: "4px",
-			cursor: "pointer",
-		},
+		// Appearance is owned by theme.js select rules; only the cursor is set here.
+		{ cursor: "pointer" },
 		{ id: "gemini-autoread-default-toggle" },
 	);
 	defToggleSelect.appendChild(
@@ -72,14 +66,8 @@ globalThis.GAR_Components.StartupConfig = (state, createEl) => {
 	);
 	const defModeSelect = createEl(
 		"select",
-		{
-			padding: "4px",
-			background: GAR_Config.COLORS.INPUT_BG,
-			color: GAR_Config.COLORS.TEXT,
-			border: `1px solid ${GAR_Config.COLORS.BORDER_LIGHT}`,
-			borderRadius: "4px",
-			cursor: "pointer",
-		},
+		// Appearance is owned by theme.js select rules; only the cursor is set here.
+		{ cursor: "pointer" },
 		{ id: "gemini-autoread-default-mode" },
 	);
 	defModeSelect.appendChild(
