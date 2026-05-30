@@ -1,7 +1,7 @@
 {
 	"manifest_version": 3,
 	"name": "Gemini Auto Read",
-	"version": "1.0.4",
+	"version": "1.0.5",
 	"description": "Auto-play voice responses on Gemini",
 	"permissions": [
 		"storage"
@@ -36,6 +36,7 @@
 				"src/components/FloatingToggle.js",
 				"src/components/SyncModeSelector.js",
 				"src/components/StartupConfig.js",
+				"src/components/NumberSetting.js",
 				"src/components/RetryInput.js",
 				"src/components/DebounceInput.js",
 				"src/components/DebugToggle.js",

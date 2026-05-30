@@ -11,13 +11,13 @@ const GAR_State = (() => {
 	 * @type {object}
 	 */
 	const data = {
-		defaultSyncMode: "global",
-		defaultEnabled: true,
-		syncMode: "global",
-		isAutoReadEnabled: true,
-		maxAttempts: 3,
-		debounceTime: 1000,
-		debugMode: false,
+		defaultSyncMode: GAR_Config.DEFAULTS.SYNC_MODE,
+		defaultEnabled: GAR_Config.DEFAULTS.ENABLED,
+		syncMode: GAR_Config.DEFAULTS.SYNC_MODE,
+		isAutoReadEnabled: GAR_Config.DEFAULTS.ENABLED,
+		maxAttempts: GAR_Config.DEFAULTS.MAX_ATTEMPTS,
+		debounceTime: GAR_Config.DEFAULTS.DEBOUNCE_TIME,
+		debugMode: GAR_Config.DEFAULTS.DEBUG_MODE,
 		shortcutToggle: GAR_Config.DEFAULTS.SHORTCUT_TOGGLE,
 		shortcutSettings: GAR_Config.DEFAULTS.SHORTCUT_SETTINGS,
 		timeoutId: null,

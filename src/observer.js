@@ -41,15 +41,11 @@ const GAR_Observer = (() => {
 		}
 
 		const vIcon = volumeIcons.item(volumeIcons.length - 1);
-		const vBtn = vIcon.closest("button");
+		// The element that toggles the options menu — a button when available, else the icon.
+		const menuTrigger = vIcon.closest("button") || vIcon;
 
-		if (vBtn) {
-			vBtn.click();
-			Logger.log(state.debugMode, "Auto-read: Clicked more options (vBtn).");
-		} else {
-			vIcon.click();
-			Logger.log(state.debugMode, "Auto-read: Clicked more options (vIcon).");
-		}
+		menuTrigger.click();
+		Logger.log(state.debugMode, "Auto-read: Clicked more options.");
 
 		// Wait for the TTS button to appear in the menu/DOM
 		Logger.log(
@@ -64,6 +60,9 @@ const GAR_Observer = (() => {
 
 		if (!ttsButtonAppeared) {
 			Logger.log(state.debugMode, "Auto-read: TTS menu item did not appear.");
+			// Close the menu we just opened so it doesn't stay hanging in the UI
+			// and so the next retry starts from a clean (closed) state.
+			menuTrigger.click();
 			return false;
 		}
 

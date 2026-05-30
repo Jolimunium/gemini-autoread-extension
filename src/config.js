@@ -32,6 +32,11 @@ const GAR_Config = {
 
 	/** Default values applied when no saved settings are found. */
 	DEFAULTS: {
+		SYNC_MODE: "global",
+		ENABLED: true,
+		MAX_ATTEMPTS: 3,
+		DEBOUNCE_TIME: 1000,
+		DEBUG_MODE: false,
 		SHORTCUT_TOGGLE: "Control+Shift+KeyE",
 		SHORTCUT_SETTINGS: "Control+Shift+KeyS",
 	},

@@ -79,14 +79,7 @@ globalThis.GAR_Components.ShortcutKeyBind = (
 			if (e.key === "Escape") return cancelRecording();
 			if (["Control", "Shift", "Alt", "Meta"].includes(e.key)) return;
 
-			const parts = [];
-			if (e.ctrlKey) parts.push("Control");
-			if (e.shiftKey) parts.push("Shift");
-			if (e.altKey) parts.push("Alt");
-			if (e.metaKey) parts.push("Meta");
-			if (!["Control", "Shift", "Alt", "Meta"].includes(e.key))
-				parts.push(e.code);
-			const newCombo = parts.join("+");
+			const newCombo = GAR_Utils.getShortcutFromEvent(e);
 
 			if (keyName === "toggle") state.shortcutToggle = newCombo;
 			if (keyName === "settings") state.shortcutSettings = newCombo;

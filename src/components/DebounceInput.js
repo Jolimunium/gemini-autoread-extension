@@ -8,48 +8,18 @@ globalThis.GAR_Components = globalThis.GAR_Components || {};
  * @param {function} createEl - Utility function to create styled DOM elements.
  * @returns {HTMLElement} A wrapper div containing the label and input.
  */
-globalThis.GAR_Components.DebounceInput = (state, createEl) => {
-	const debLabel = createEl(
-		"label",
-		{ display: "block", marginBottom: "5px" },
-		{ textContent: "⏱️ Wait After Response (ms):" },
-	);
-	const debInput = createEl(
-		"input",
-		{
-			width: "100%",
-			padding: "6px",
-			background: "#333",
-			color: "#fff",
-			border: "1px solid #444",
-			borderRadius: "4px",
+globalThis.GAR_Components.DebounceInput = (state, createEl) =>
+	GAR_Components.NumberSetting({
+		createEl,
+		label: "⏱️ Wait After Response (ms):",
+		value: state.debounceTime,
+		min: 200,
+		max: 5000,
+		id: "gemini-autoread-debounce",
+		name: "debounceTime",
+		hint: "Delay before reading after Gemini responds. Range: 200–5,000 ms",
+		onChange: (val) => {
+			state.debounceTime = val;
+			GAR_State.save();
 		},
-		{
-			type: "number",
-			value: state.debounceTime,
-			min: 200,
-			max: 5000,
-			id: "gemini-autoread-debounce",
-			name: "debounceTime",
-		},
-	);
-
-	// Save the updated debounce time whenever the user changes the input value.
-	debInput.onchange = (e) => {
-		state.debounceTime = Number.parseInt(e.target.value, 10);
-		GAR_State.save();
-	};
-
-	const wrapper = createEl("div");
-	wrapper.appendChild(debLabel);
-	wrapper.appendChild(debInput);
-	// Add a small hint underneath the input to show the allowed range.
-	wrapper.appendChild(
-		createEl(
-			"div",
-			{ fontSize: "11px", color: "#888", marginTop: "4px" },
-			{ textContent: "Delay before reading after Gemini responds. Range: 200–5,000 ms" },
-		),
-	);
-	return wrapper;
-};
+	});

@@ -19,7 +19,10 @@ const GAR_Storage = (() => {
 		switch (key) {
 			case GAR_Config.STORAGE_KEYS.ENABLED:
 				if (data.syncMode === "global") {
-					const valBool = newValue !== false && newValue !== "false";
+					const valBool = GAR_Utils.parseBool(
+						newValue,
+						GAR_Config.DEFAULTS.ENABLED,
+					);
 					if (valBool !== data.isAutoReadEnabled) {
 						data.isAutoReadEnabled = valBool;
 						updates.shouldUpdateToggle = true;
@@ -31,15 +34,20 @@ const GAR_Storage = (() => {
 				}
 				break;
 			case GAR_Config.STORAGE_KEYS.MAX_ATTEMPTS:
-				data.maxAttempts = Number.parseInt(newValue, 10) || 5;
+				data.maxAttempts =
+					Number.parseInt(newValue, 10) || GAR_Config.DEFAULTS.MAX_ATTEMPTS;
 				updates.shouldUpdateSettings = true;
 				break;
 			case GAR_Config.STORAGE_KEYS.DEBOUNCE_TIME:
-				data.debounceTime = Number.parseInt(newValue, 10) || 1000;
+				data.debounceTime =
+					Number.parseInt(newValue, 10) || GAR_Config.DEFAULTS.DEBOUNCE_TIME;
 				updates.shouldUpdateSettings = true;
 				break;
 			case GAR_Config.STORAGE_KEYS.DEBUG_MODE:
-				data.debugMode = newValue === true || newValue === "true";
+				data.debugMode = GAR_Utils.parseBool(
+					newValue,
+					GAR_Config.DEFAULTS.DEBUG_MODE,
+				);
 				updates.shouldUpdateSettings = true;
 				break;
 			case GAR_Config.STORAGE_KEYS.SHORTCUT_TOGGLE:
@@ -52,11 +60,14 @@ const GAR_Storage = (() => {
 				updates.shouldUpdateSettings = true;
 				break;
 			case GAR_Config.STORAGE_KEYS.DEFAULT_ENABLED:
-				data.defaultEnabled = newValue !== false && newValue !== "false";
+				data.defaultEnabled = GAR_Utils.parseBool(
+					newValue,
+					GAR_Config.DEFAULTS.ENABLED,
+				);
 				updates.shouldUpdateSettings = true;
 				break;
 			case GAR_Config.STORAGE_KEYS.DEFAULT_SYNC_MODE:
-				data.defaultSyncMode = newValue || "global";
+				data.defaultSyncMode = newValue || GAR_Config.DEFAULTS.SYNC_MODE;
 				updates.shouldUpdateSettings = true;
 				break;
 		}
@@ -72,20 +83,22 @@ const GAR_Storage = (() => {
 		getEnabledState: async (mode) => {
 			if (mode === "local") {
 				const val = sessionStorage.getItem(GAR_Config.STORAGE_KEYS.ENABLED);
-				if (val !== null) return val !== "false";
+				if (val !== null)
+					return GAR_Utils.parseBool(val, GAR_Config.DEFAULTS.ENABLED);
 			} else {
 				const store = await chrome.storage.local.get(
 					GAR_Config.STORAGE_KEYS.ENABLED,
 				);
 				const val = store.gemini_autoread_enabled;
-				if (val !== undefined) return val !== false && val !== "false";
+				if (val !== undefined)
+					return GAR_Utils.parseBool(val, GAR_Config.DEFAULTS.ENABLED);
 			}
 			const defStore = await chrome.storage.local.get(
 				GAR_Config.STORAGE_KEYS.DEFAULT_ENABLED,
 			);
-			return (
-				defStore.gemini_autoread_default_enabled !== false &&
-				defStore.gemini_autoread_default_enabled !== "false"
+			return GAR_Utils.parseBool(
+				defStore.gemini_autoread_default_enabled,
+				GAR_Config.DEFAULTS.ENABLED,
 			);
 		},
 
@@ -98,10 +111,12 @@ const GAR_Storage = (() => {
 			const initialStore = await chrome.storage.local.get(null);
 
 			data.defaultSyncMode =
-				initialStore.gemini_autoread_default_sync_mode || "global";
-			data.defaultEnabled =
-				initialStore.gemini_autoread_default_enabled !== false &&
-				initialStore.gemini_autoread_default_enabled !== "false";
+				initialStore.gemini_autoread_default_sync_mode ||
+				GAR_Config.DEFAULTS.SYNC_MODE;
+			data.defaultEnabled = GAR_Utils.parseBool(
+				initialStore.gemini_autoread_default_enabled,
+				GAR_Config.DEFAULTS.ENABLED,
+			);
 
 			data.syncMode = sessionStorage.getItem(GAR_Config.STORAGE_KEYS.SYNC_MODE);
 			if (!data.syncMode) {
@@ -115,12 +130,15 @@ const GAR_Storage = (() => {
 			data.isAutoReadEnabled = await GAR_Storage.getEnabledState(data.syncMode);
 
 			data.maxAttempts =
-				Number.parseInt(initialStore.gemini_autoread_max_attempts, 10) || 5;
+				Number.parseInt(initialStore.gemini_autoread_max_attempts, 10) ||
+				GAR_Config.DEFAULTS.MAX_ATTEMPTS;
 			data.debounceTime =
-				Number.parseInt(initialStore.gemini_autoread_debounce, 10) || 1000;
-			data.debugMode =
-				initialStore.gemini_autoread_debug === true ||
-				initialStore.gemini_autoread_debug === "true";
+				Number.parseInt(initialStore.gemini_autoread_debounce, 10) ||
+				GAR_Config.DEFAULTS.DEBOUNCE_TIME;
+			data.debugMode = GAR_Utils.parseBool(
+				initialStore.gemini_autoread_debug,
+				GAR_Config.DEFAULTS.DEBUG_MODE,
+			);
 			data.shortcutToggle =
 				initialStore.gemini_autoread_shortcut_toggle ||
 				GAR_Config.DEFAULTS.SHORTCUT_TOGGLE;

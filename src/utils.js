@@ -4,6 +4,36 @@
 // biome-ignore lint/correctness/noUnusedVariables: shared globally
 const GAR_Utils = {
 	/**
+	 * Interprets a stored value as a boolean, tolerating both real booleans and
+	 * their string forms ("true"/"false") as written by sessionStorage.
+	 * @param {any} value - The raw value from storage.
+	 * @param {boolean} [defaultValue=false] - Returned when the value is neither a recognized true nor false.
+	 * @returns {boolean} The parsed boolean.
+	 */
+	parseBool: (value, defaultValue = false) => {
+		if (value === true || value === "true") return true;
+		if (value === false || value === "false") return false;
+		return defaultValue;
+	},
+
+	/**
+	 * Converts a keyboard event into a normalized shortcut combo string
+	 * (e.g., "Control+Shift+KeyE"). Modifier-only presses yield just the modifiers.
+	 * @param {KeyboardEvent} e - The keyboard event to interpret.
+	 * @returns {string} The shortcut combo string.
+	 */
+	getShortcutFromEvent: (e) => {
+		const parts = [];
+		if (e.ctrlKey) parts.push("Control");
+		if (e.shiftKey) parts.push("Shift");
+		if (e.altKey) parts.push("Alt");
+		if (e.metaKey) parts.push("Meta");
+		if (!["Control", "Shift", "Alt", "Meta"].includes(e.key))
+			parts.push(e.code);
+		return parts.join("+");
+	},
+
+	/**
 	 * DOM utility functions for element creation and state observation.
 	 */
 	DOM: {
