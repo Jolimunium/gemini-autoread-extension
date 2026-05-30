@@ -27,13 +27,13 @@ globalThis.GAR_Components.FloatingToggle = (
 			position: "fixed",
 			bottom: GAR_Config.LAYOUT.TOGGLE_BOTTOM,
 			right: GAR_Config.LAYOUT.TOGGLE_RIGHT,
-			backgroundColor: "rgba(30, 30, 30, 0.6)",
+			backgroundColor: GAR_Config.COLORS.TOGGLE_BG,
 			backdropFilter: "blur(10px)",
 			WebkitBackdropFilter: "blur(10px)",
 			color: "white",
 			borderRadius: "12px",
 			zIndex: "2147483647",
-			boxShadow: "0 4px 12px rgba(0,0,0,0.5)",
+			boxShadow: `0 4px 12px ${GAR_Config.COLORS.SHADOW}`,
 			fontFamily: "sans-serif",
 			fontSize: "14px",
 			userSelect: "none",
@@ -96,7 +96,7 @@ globalThis.GAR_Components.FloatingToggle = (
 
 	// Hover effect: subtle background highlight when hovering over the toggle area.
 	togglePart.onmouseenter = () =>
-		(togglePart.style.backgroundColor = "rgba(255,255,255,0.1)");
+		(togglePart.style.backgroundColor = GAR_Config.COLORS.HOVER_BG);
 	togglePart.onmouseleave = () =>
 		(togglePart.style.backgroundColor = "transparent");
 
@@ -125,7 +125,7 @@ globalThis.GAR_Components.FloatingToggle = (
 
 	// Hover effect: highlight background and rotate gear icon on hover.
 	settingsPart.onmouseenter = () => {
-		settingsPart.style.backgroundColor = "rgba(255,255,255,0.1)";
+		settingsPart.style.backgroundColor = GAR_Config.COLORS.HOVER_BG;
 		gear.style.transform = "rotate(45deg)";
 	};
 	settingsPart.onmouseleave = () => {
@@ -136,7 +136,11 @@ globalThis.GAR_Components.FloatingToggle = (
 	container.appendChild(togglePart);
 	// Vertical divider between the two sections.
 	container.appendChild(
-		createEl("div", { width: "1px", height: "20px", backgroundColor: "#666" }),
+		createEl("div", {
+			width: "1px",
+			height: "20px",
+			backgroundColor: GAR_Config.COLORS.TOGGLE_DIVIDER,
+		}),
 	);
 	container.appendChild(settingsPart);
 

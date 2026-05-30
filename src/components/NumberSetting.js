@@ -41,9 +41,9 @@ globalThis.GAR_Components.NumberSetting = ({
 		{
 			width: "100%",
 			padding: "6px",
-			background: "#333",
-			color: "#fff",
-			border: "1px solid #444",
+			background: GAR_Config.COLORS.INPUT_BG,
+			color: GAR_Config.COLORS.TEXT,
+			border: `1px solid ${GAR_Config.COLORS.BORDER}`,
 			borderRadius: "4px",
 		},
 		{ type: "number", value, min, max, id, name },
@@ -54,7 +54,7 @@ globalThis.GAR_Components.NumberSetting = ({
 	wrapper.appendChild(
 		createEl(
 			"div",
-			{ fontSize: "11px", color: "#888", marginTop: "4px" },
+			{ fontSize: "11px", color: GAR_Config.COLORS.HINT, marginTop: "4px" },
 			{ textContent: hint },
 		),
 	);

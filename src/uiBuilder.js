@@ -76,6 +76,28 @@ const GAR_UI = (() => {
 		setText("gemini-autoread-shortcut-btn-settings", state.shortcutSettings);
 	};
 
+	/**
+	 * Applies a colored glow effect to the mic icon (used for working/error states).
+	 * @param {HTMLElement} mic - The mic icon element.
+	 * @param {string} color - The glow color.
+	 */
+	const applyMicGlow = (mic, color) => {
+		mic.style.color = "transparent";
+		mic.style.textShadow = `0 0 0 ${color}`;
+		mic.style.filter = `drop-shadow(0 0 6px ${color}) drop-shadow(0 0 10px ${color})`;
+	};
+
+	/**
+	 * Clears all mic icon styling and resets its state back to normal.
+	 * @param {HTMLElement} mic - The mic icon element.
+	 */
+	const resetMic = (mic) => {
+		mic.style.color = "";
+		mic.style.textShadow = "none";
+		mic.style.filter = "none";
+		mic.dataset.state = "normal";
+	};
+
 	// ─── Styles ─────────────────────────────────────────────
 
 	/**
@@ -91,23 +113,18 @@ const GAR_UI = (() => {
 	// ─── Panel Builder ──────────────────────────────────────
 
 	/**
-	 * Constructs the settings panel DOM and appends it to the shadow root.
+	 * Builds the settings panel header: title, version badge, and close button.
+	 * @returns {HTMLElement} The header row element.
 	 */
-	const createSettingsPanel = () => {
-		if (!shadowRoot || shadowRoot.getElementById("gemini-autoread-settings"))
-			return;
-
-		// Panel is hidden by default via CSS (opacity: 0, visibility: hidden).
-		// Visibility is toggled by adding/removing the .is-visible class.
-		const panel = createEl("div", {}, { id: "gemini-autoread-settings" });
-
+	const buildPanelHeader = () => {
 		const header = createEl("div", {
 			display: "flex",
 			justifyContent: "space-between",
 			marginBottom: "15px",
-			borderBottom: "1px solid #334155",
+			borderBottom: `1px solid ${GAR_Config.COLORS.DIVIDER}`,
 			paddingBottom: "10px",
 		});
+
 		const titleWrapper = createEl("div", {
 			display: "flex",
 			alignItems: "baseline",
@@ -123,11 +140,12 @@ const GAR_UI = (() => {
 		titleWrapper.appendChild(
 			createEl(
 				"span",
-				{ fontSize: "11px", color: "#64748b" },
+				{ fontSize: "11px", color: GAR_Config.COLORS.HINT_FAINT },
 				{ textContent: `v${chrome.runtime.getManifest().version}` },
 			),
 		);
 		header.appendChild(titleWrapper);
+
 		const closeBtn = createEl(
 			"span",
 			{
@@ -140,62 +158,23 @@ const GAR_UI = (() => {
 		);
 		closeBtn.onclick = GAR_UI.togglePanel;
 		header.appendChild(closeBtn);
-		panel.appendChild(header);
 
-		/**
-		 * Helper to add a row to the settings panel.
-		 * @param {HTMLElement} componentElement - The component to add.
-		 */
-		const addRow = (componentElement) => {
-			const r = createEl("div", { marginBottom: "15px" });
-			r.appendChild(componentElement);
-			panel.appendChild(r);
-		};
+		return header;
+	};
 
-		// Append setting components
-		addRow(GAR_Components.SyncModeSelector(state, createEl, updateToggleUI));
-		addRow(GAR_Components.StartupConfig(state, createEl));
-		addRow(GAR_Components.RetryInput(state, createEl));
-		addRow(GAR_Components.DebounceInput(state, createEl));
-		addRow(GAR_Components.DebugToggle(state, createEl));
-
-		panel.appendChild(
-			createEl(
-				"div",
-				{
-					fontWeight: "bold",
-					marginBottom: "5px",
-					marginTop: "15px",
-					borderTop: "1px solid #334155",
-					paddingTop: "10px",
-				},
-				{ textContent: "⌨️ Shortcuts:" },
-			),
-		);
-		addRow(
-			GAR_Components.ShortcutKeyBind(
-				state,
-				createEl,
-				"Toggle Auto-Read",
-				"toggle",
-			),
-		);
-		addRow(
-			GAR_Components.ShortcutKeyBind(
-				state,
-				createEl,
-				"Toggle Settings",
-				"settings",
-			),
-		);
-
+	/**
+	 * Builds the footer action buttons: Export Logs and Close.
+	 * @returns {HTMLElement} The button row element.
+	 */
+	const buildPanelFooter = () => {
 		const btns = createEl("div", {
 			display: "flex",
 			gap: "10px",
 			marginTop: "15px",
 			paddingTop: "15px",
-			borderTop: "1px solid #334155",
+			borderTop: `1px solid ${GAR_Config.COLORS.DIVIDER}`,
 		});
+
 		const exportBtn = createEl(
 			"button",
 			{
@@ -224,9 +203,14 @@ const GAR_UI = (() => {
 
 		btns.appendChild(exportBtn);
 		btns.appendChild(closePanelBtn);
-		panel.appendChild(btns);
+		return btns;
+	};
 
-		// Ko-fi support button
+	/**
+	 * Builds the Ko-fi support link button.
+	 * @returns {HTMLElement} The Ko-fi anchor element.
+	 */
+	const buildKofiButton = () => {
 		const kofiLink = createEl(
 			"a",
 			{
@@ -243,17 +227,81 @@ const GAR_UI = (() => {
 			},
 		);
 
-		const kofiImg = createEl(
-			"img",
-			{ width: "70%", height: "auto", border: "0px", borderRadius: "4px" },
-			{
-				src: chrome.runtime.getURL("src/assets/kofi_button.svg"),
-				alt: "Buy Me a Coffee at ko-fi.com",
-			},
+		kofiLink.appendChild(
+			createEl(
+				"img",
+				{ width: "70%", height: "auto", border: "0px", borderRadius: "4px" },
+				{
+					src: chrome.runtime.getURL("src/assets/kofi_button.svg"),
+					alt: "Buy Me a Coffee at ko-fi.com",
+				},
+			),
+		);
+		return kofiLink;
+	};
+
+	/**
+	 * Constructs the settings panel DOM and appends it to the shadow root.
+	 */
+	const createSettingsPanel = () => {
+		if (!shadowRoot || shadowRoot.getElementById("gemini-autoread-settings"))
+			return;
+
+		// Panel is hidden by default via CSS (opacity: 0, visibility: hidden).
+		// Visibility is toggled by adding/removing the .is-visible class.
+		const panel = createEl("div", {}, { id: "gemini-autoread-settings" });
+
+		panel.appendChild(buildPanelHeader());
+
+		/**
+		 * Helper to add a row to the settings panel.
+		 * @param {HTMLElement} componentElement - The component to add.
+		 */
+		const addRow = (componentElement) => {
+			const r = createEl("div", { marginBottom: "15px" });
+			r.appendChild(componentElement);
+			panel.appendChild(r);
+		};
+
+		// Append setting components
+		addRow(GAR_Components.SyncModeSelector(state, createEl, updateToggleUI));
+		addRow(GAR_Components.StartupConfig(state, createEl));
+		addRow(GAR_Components.RetryInput(state, createEl));
+		addRow(GAR_Components.DebounceInput(state, createEl));
+		addRow(GAR_Components.DebugToggle(state, createEl));
+
+		panel.appendChild(
+			createEl(
+				"div",
+				{
+					fontWeight: "bold",
+					marginBottom: "5px",
+					marginTop: "15px",
+					borderTop: `1px solid ${GAR_Config.COLORS.DIVIDER}`,
+					paddingTop: "10px",
+				},
+				{ textContent: "⌨️ Shortcuts:" },
+			),
+		);
+		addRow(
+			GAR_Components.ShortcutKeyBind(
+				state,
+				createEl,
+				"Toggle Auto-Read",
+				"toggle",
+			),
+		);
+		addRow(
+			GAR_Components.ShortcutKeyBind(
+				state,
+				createEl,
+				"Toggle Settings",
+				"settings",
+			),
 		);
 
-		kofiLink.appendChild(kofiImg);
-		panel.appendChild(kofiLink);
+		panel.appendChild(buildPanelFooter());
+		panel.appendChild(buildKofiButton());
 
 		shadowRoot.appendChild(panel);
 	};
@@ -328,29 +376,17 @@ const GAR_UI = (() => {
 
 			switch (stateType) {
 				case "working":
-					mic.style.color = "transparent";
-					mic.style.textShadow = `0 0 0 ${GAR_Config.COLORS.GREEN}`;
-					mic.style.filter = `drop-shadow(0 0 6px ${GAR_Config.COLORS.GREEN}) drop-shadow(0 0 10px ${GAR_Config.COLORS.GREEN})`;
+					applyMicGlow(mic, GAR_Config.COLORS.GREEN);
 					break;
 				case "error":
-					mic.style.color = "transparent";
-					mic.style.textShadow = `0 0 0 ${GAR_Config.COLORS.RED}`;
-					mic.style.filter = `drop-shadow(0 0 6px ${GAR_Config.COLORS.RED}) drop-shadow(0 0 10px ${GAR_Config.COLORS.RED})`;
-
+					applyMicGlow(mic, GAR_Config.COLORS.RED);
+					// Auto-clear the error glow after a delay, unless the state changed meanwhile.
 					setTimeout(() => {
-						if (mic.dataset.state === "error") {
-							mic.style.color = "";
-							mic.style.textShadow = "none";
-							mic.style.filter = "none";
-							mic.dataset.state = "normal";
-						}
+						if (mic.dataset.state === "error") resetMic(mic);
 					}, GAR_Config.TIMINGS.ERROR_RESET_TIMEOUT);
 					break;
 				default:
-					mic.style.color = "";
-					mic.style.textShadow = "none";
-					mic.style.filter = "none";
-					mic.dataset.state = "normal";
+					resetMic(mic);
 					break;
 			}
 		},

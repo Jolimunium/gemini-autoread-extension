@@ -47,12 +47,12 @@ globalThis.GAR_Components.SyncModeSelector = (
 			state.syncMode === "local"
 				? GAR_Config.COLORS.GREEN
 				: GAR_Config.COLORS.SURFACE;
-		localBtn.style.color = "#FFF";
+		localBtn.style.color = GAR_Config.COLORS.TEXT;
 		globalBtn.style.backgroundColor =
 			state.syncMode === "global"
 				? GAR_Config.COLORS.GREEN
 				: GAR_Config.COLORS.SURFACE;
-		globalBtn.style.color = "#FFF";
+		globalBtn.style.color = GAR_Config.COLORS.TEXT;
 	};
 	updateModeBtns();
 
@@ -88,7 +88,7 @@ globalThis.GAR_Components.SyncModeSelector = (
 	syncWrapper.appendChild(
 		createEl(
 			"div",
-			{ fontSize: "11px", color: "#888", marginTop: "5px" },
+			{ fontSize: "11px", color: GAR_Config.COLORS.HINT, marginTop: "5px" },
 			{
 				textContent: "Local: This tab only | Global: Shared across all tabs",
 			},

@@ -49,13 +49,28 @@ const GAR_Config = {
 		ERROR_RESET_TIMEOUT: 3000,
 	},
 
-	/** Accent color palette used throughout the UI. Single source of truth for all color values. */
+	/** Color palette used throughout the UI. Single source of truth for all color values. */
 	COLORS: {
+		// Accent colors
 		GREEN: "#10b981",
 		RED: "#f43f5e",
 		BLUE: "#3b82f6",
 		SURFACE: "#1e293b",
 		RECORDING_BG: "#064e3b",
+		// Neutral palette — inputs, borders, dividers, and text
+		INPUT_BG: "#333",
+		BORDER: "#444",
+		BORDER_LIGHT: "#555",
+		DIVIDER: "#334155",
+		TOGGLE_DIVIDER: "#666",
+		TEXT: "#fff",
+		TEXT_MUTED: "#ccc",
+		HINT: "#888",
+		HINT_FAINT: "#64748b",
+		// Floating toggle surfaces
+		TOGGLE_BG: "rgba(30, 30, 30, 0.6)",
+		HOVER_BG: "rgba(255, 255, 255, 0.1)",
+		SHADOW: "rgba(0, 0, 0, 0.5)",
 	},
 
 	/** Layout positioning for the floating UI elements. */

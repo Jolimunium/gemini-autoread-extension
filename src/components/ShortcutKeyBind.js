@@ -31,10 +31,10 @@ globalThis.GAR_Components.ShortcutKeyBind = (
 		"button",
 		{
 			padding: "4px 8px",
-			backgroundColor: "#333",
-			border: "1px solid #555",
+			backgroundColor: GAR_Config.COLORS.INPUT_BG,
+			border: `1px solid ${GAR_Config.COLORS.BORDER_LIGHT}`,
 			borderRadius: "4px",
-			color: "#fff",
+			color: GAR_Config.COLORS.TEXT,
 			cursor: "pointer",
 			width: "140px",
 			textAlign: "center",
@@ -63,8 +63,8 @@ globalThis.GAR_Components.ShortcutKeyBind = (
 		const cancelRecording = () => {
 			valBtn.textContent =
 				keyName === "toggle" ? state.shortcutToggle : state.shortcutSettings;
-			valBtn.style.backgroundColor = "#333";
-			valBtn.style.borderColor = "#555";
+			valBtn.style.backgroundColor = GAR_Config.COLORS.INPUT_BG;
+			valBtn.style.borderColor = GAR_Config.COLORS.BORDER_LIGHT;
 			valBtn.dataset.isRecording = "false";
 			abortController.abort();
 		};
@@ -86,8 +86,8 @@ globalThis.GAR_Components.ShortcutKeyBind = (
 			GAR_State.save();
 
 			valBtn.textContent = newCombo;
-			valBtn.style.backgroundColor = "#333";
-			valBtn.style.borderColor = "#555";
+			valBtn.style.backgroundColor = GAR_Config.COLORS.INPUT_BG;
+			valBtn.style.borderColor = GAR_Config.COLORS.BORDER_LIGHT;
 			valBtn.dataset.isRecording = "false";
 			abortController.abort();
 		};
@@ -108,7 +108,9 @@ globalThis.GAR_Components.ShortcutKeyBind = (
 		});
 	};
 
-	row.appendChild(createEl("span", { color: "#ccc" }, { textContent: label }));
+	row.appendChild(
+		createEl("span", { color: GAR_Config.COLORS.TEXT_MUTED }, { textContent: label }),
+	);
 	row.appendChild(valBtn);
 	return row;
 };
