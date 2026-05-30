@@ -12,7 +12,7 @@ globalThis.GAR_Components.DebounceInput = (state, createEl) => {
 	const debLabel = createEl(
 		"label",
 		{ display: "block", marginBottom: "5px" },
-		{ textContent: "⏱️ Wait Time (ms):" },
+		{ textContent: "⏱️ Wait After Response (ms):" },
 	);
 	const debInput = createEl(
 		"input",
