@@ -76,7 +76,7 @@ const GAR_Observer = (() => {
 			const isPlaying = await DOM.waitForState(
 				() =>
 					document.querySelectorAll(GAR_Config.SELECTORS.PAUSE_ICON).length > 0,
-				GAR_Config.TIMINGS.WAIT_TIMEOUT,
+				GAR_Config.TIMINGS.PLAYBACK_CONFIRM_TIMEOUT,
 			);
 
 			Logger.log(
@@ -117,7 +117,7 @@ const GAR_Observer = (() => {
 
 			Logger.log(state.debugMode, "Process: Starting auto-read logic...");
 			GAR_UI.setMicState("working");
-			await DOM.sleep(GAR_Config.TIMINGS.SLEEP_INTERVAL);
+			await DOM.sleep(GAR_Config.TIMINGS.RETRY_INTERVAL);
 
 			for (let i = 1; i <= state.maxAttempts; i++) {
 				Logger.log(
@@ -141,7 +141,7 @@ const GAR_Observer = (() => {
 					GAR_UI.setMicState("normal");
 					return;
 				}
-				await DOM.sleep(GAR_Config.TIMINGS.SLEEP_INTERVAL);
+				await DOM.sleep(GAR_Config.TIMINGS.RETRY_INTERVAL);
 			}
 
 			Logger.log(
