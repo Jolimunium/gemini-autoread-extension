@@ -81,7 +81,7 @@ globalThis.GAR_Components.SyncModeSelector = (
 		createEl(
 			"div",
 			{ fontWeight: "bold", marginBottom: "5px" },
-			{ textContent: "🔄 Current Tab Sync Mode:" },
+			{ textContent: "🔄 Sync Mode:" },
 		),
 	);
 	syncWrapper.appendChild(syncContainer);
@@ -90,7 +90,7 @@ globalThis.GAR_Components.SyncModeSelector = (
 			"div",
 			{ fontSize: "11px", color: "#888", marginTop: "5px" },
 			{
-				textContent: "Local: Tab-specific logic | Global: Sync across all tabs",
+				textContent: "Local: This tab only | Global: Shared across all tabs",
 			},
 		),
 	);
