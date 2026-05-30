@@ -15,7 +15,7 @@ const GAR_State = (() => {
 		defaultEnabled: true,
 		syncMode: "global",
 		isAutoReadEnabled: true,
-		maxAttempts: 5,
+		maxAttempts: 3,
 		debounceTime: 1000,
 		debugMode: false,
 		shortcutToggle: GAR_Config.DEFAULTS.SHORTCUT_TOGGLE,

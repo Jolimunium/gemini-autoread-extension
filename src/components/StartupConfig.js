@@ -68,7 +68,7 @@ globalThis.GAR_Components.StartupConfig = (state, createEl) => {
 		fontSize: "13px",
 	});
 	defModeWrapper.appendChild(
-		createEl("span", {}, { textContent: "Start Sync In:" }),
+		createEl("span", {}, { textContent: "Default Sync Mode:" }),
 	);
 	const defModeSelect = createEl(
 		"select",

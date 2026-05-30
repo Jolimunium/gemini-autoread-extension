@@ -18,7 +18,7 @@ const GAR_App = (() => {
 	const performHealthCheck = async () => {
 		if (!state.debugMode) return;
 
-		await GAR_Utils.DOM.sleep(GAR_Config.TIMINGS.WAIT_TIMEOUT);
+		await GAR_Utils.DOM.sleep(GAR_Config.TIMINGS.PAGE_LOAD_TIMEOUT);
 
 		const isChatPage = /^\/app\/.+/.test(globalThis.location.pathname);
 		const containerSelector = `${GAR_Config.SELECTORS.CHAT_CONTAINER}, ${GAR_Config.SELECTORS.CHAT_CONTAINER_FALLBACK}`;
@@ -29,7 +29,7 @@ const GAR_App = (() => {
 				() =>
 					document.querySelector(containerSelector) ||
 					document.querySelector(volumeSelector),
-				GAR_Config.TIMINGS.WAIT_TIMEOUT,
+				GAR_Config.TIMINGS.PAGE_LOAD_TIMEOUT,
 			);
 		}
 

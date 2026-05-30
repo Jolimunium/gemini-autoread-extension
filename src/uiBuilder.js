@@ -108,13 +108,26 @@ const GAR_UI = (() => {
 			borderBottom: "1px solid #334155",
 			paddingBottom: "10px",
 		});
-		header.appendChild(
+		const titleWrapper = createEl("div", {
+			display: "flex",
+			alignItems: "baseline",
+			gap: "6px",
+		});
+		titleWrapper.appendChild(
 			createEl(
 				"span",
 				{ fontSize: "18px", fontWeight: "bold" },
 				{ textContent: "⚙️ Settings" },
 			),
 		);
+		titleWrapper.appendChild(
+			createEl(
+				"span",
+				{ fontSize: "11px", color: "#64748b" },
+				{ textContent: `v${chrome.runtime.getManifest().version}` },
+			),
+		);
+		header.appendChild(titleWrapper);
 		const closeBtn = createEl(
 			"span",
 			{
@@ -331,7 +344,7 @@ const GAR_UI = (() => {
 							mic.style.filter = "none";
 							mic.dataset.state = "normal";
 						}
-					}, GAR_Config.TIMINGS.WAIT_TIMEOUT);
+					}, GAR_Config.TIMINGS.ERROR_RESET_TIMEOUT);
 					break;
 				default:
 					mic.style.color = "";

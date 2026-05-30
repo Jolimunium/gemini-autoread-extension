@@ -1,9 +1,11 @@
 {
 	"manifest_version": 3,
 	"name": "Gemini Auto Read",
-	"version": "1.0.3",
+	"version": "1.0.4",
 	"description": "Auto-play voice responses on Gemini",
-	"permissions": ["storage"],
+	"permissions": [
+		"storage"
+	],
 	"icons": {
 		"16": "src/assets/icon.png",
 		"48": "src/assets/icon.png",
@@ -11,13 +13,20 @@
 	},
 	"web_accessible_resources": [
 		{
-			"resources": ["src/assets/kofi_button.svg", "src/assets/icon.png"],
-			"matches": ["https://gemini.google.com/*"]
+			"resources": [
+				"src/assets/kofi_button.svg",
+				"src/assets/icon.png"
+			],
+			"matches": [
+				"https://gemini.google.com/*"
+			]
 		}
 	],
 	"content_scripts": [
 		{
-			"matches": ["https://gemini.google.com/*"],
+			"matches": [
+				"https://gemini.google.com/*"
+			],
 			"js": [
 				"src/config.js",
 				"src/utils.js",

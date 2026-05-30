@@ -12,7 +12,7 @@ globalThis.GAR_Components.RetryInput = (state, createEl) => {
 	const attLabel = createEl(
 		"label",
 		{ display: "block", marginBottom: "5px" },
-		{ textContent: "🔢 Retry Attempts (Max):" },
+		{ textContent: "🔢 Max Retry Attempts:" },
 	);
 	const attInput = createEl(
 		"input",
