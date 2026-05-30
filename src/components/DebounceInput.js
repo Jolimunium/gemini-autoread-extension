@@ -47,8 +47,8 @@ globalThis.GAR_Components.DebounceInput = (state, createEl) => {
 	wrapper.appendChild(
 		createEl(
 			"div",
-			{ fontSize: "10px", color: "#888", marginTop: "4px" },
-			{ textContent: "Range: 200 - 5,000 ms" },
+			{ fontSize: "11px", color: "#888", marginTop: "4px" },
+			{ textContent: "Delay before reading after Gemini responds. Range: 200–5,000 ms" },
 		),
 	);
 	return wrapper;
