@@ -331,7 +331,7 @@ const GAR_UI = (() => {
 							mic.style.filter = "none";
 							mic.dataset.state = "normal";
 						}
-					}, GAR_Config.TIMINGS.WAIT_TIMEOUT);
+					}, GAR_Config.TIMINGS.ERROR_RESET_TIMEOUT);
 					break;
 				default:
 					mic.style.color = "";
